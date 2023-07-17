@@ -56,6 +56,7 @@ class FunctionPlotter(QMainWindow):
         try:
             x = np.linspace(float(x_min), float(x_max), config.SAMPLING_FREQ)
             func_str = re.sub(r'\bx\b', '(x)', func_str)
+            func_str = re.sub(r'\^', '**', func_str)
             y = eval(func_str)
         except SyntaxError as e:
             return False, f"Invalid function: {e}"
