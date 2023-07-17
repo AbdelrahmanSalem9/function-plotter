@@ -1,15 +1,19 @@
 import re
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-from PySide2.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QMessageBox
+from PySide2.QtWidgets import QMainWindow, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QMessageBox
 from PySide2.QtGui import QDoubleValidator
+import configuration as config
+
 
 class FunctionPlotter(QMainWindow):
     def __init__(self):
         super(FunctionPlotter, self).__init__()
-        self.setWindowTitle("Function Plotter")
-        self.setGeometry(100, 100, 800, 600)
+        self.setWindowTitle(config.WINDOW_TITLE)
+        self.setGeometry(config.WINDOW_X, config.WINDOW_Y,
+                         config.WINDOW_WIDTH, config.WINDOW_HEIGHT)
         self.setup_ui()
 
     def setup_ui(self):
@@ -50,11 +54,8 @@ class FunctionPlotter(QMainWindow):
             return False, "Please enter a function."
 
         try:
-            x = np.linspace(float(x_min), float(x_max), 100)
+            x = np.linspace(float(x_min), float(x_max), config.SAMPLING_FREQ)
             func_str = re.sub(r'\bx\b', '(x)', func_str)
-            np.seterr(invalid='raise')
-            np.seterr(over='raise')
-            np.seterr(divide='raise')
             y = eval(func_str)
         except SyntaxError as e:
             return False, f"Invalid function: {e}"
@@ -66,20 +67,16 @@ class FunctionPlotter(QMainWindow):
         if x_min >= x_max:
             return False, "Invalid x range: Minimum value must be less than maximum value."
 
-        return True, ""
+        return True, x, y
 
     def plot_function(self):
         func_str = self.func_input.text()
-        is_valid, error_msg = self.validate_input(func_str, self.x_min_input.text(), self.x_max_input.text())
+        is_valid, x, y = self.validate_input(
+            func_str, self.x_min_input.text(), self.x_max_input.text())
 
         if not is_valid:
-            self.show_error_message(error_msg)
+            self.show_error_message(x)
             return
-        x_min = float(self.x_min_input.text())
-        x_max = float(self.x_max_input.text())
-        x = np.linspace(x_min, x_max, 100)
-        func_str = re.sub(r'\bx\b', '(x)', func_str)
-        y = eval(func_str)
 
         # Clear the previous plot and plot the new one
         self.figure.clear()
