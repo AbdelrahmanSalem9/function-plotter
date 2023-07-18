@@ -59,11 +59,11 @@ class FunctionPlotter(QMainWindow):
             func_str = re.sub(r'\^', '**', func_str)
             y = eval(func_str)
         except SyntaxError as e:
-            return False, f"Invalid function: {e}", None
+            return False, f"Invalid function", None
         except ValueError as e:
             return False, "Please enter both minimum and maximum values of x.", None
         except Exception as e:
-            return False, f"Function evaluation error: {e}", None
+            return False, f"Function evaluation error, Enter valid function", None
 
         if x_min >= x_max:
             return False, "Invalid x range: Minimum value must be less than maximum value.", None
