@@ -51,7 +51,7 @@ class FunctionPlotter(QMainWindow):
 
     def validate_input(self, func_str, x_min, x_max):
         if not func_str:
-            return False, "Please enter a function."
+            return False, "Please enter a function.", None
 
         try:
             x = np.linspace(float(x_min), float(x_max), config.SAMPLING_FREQ)
